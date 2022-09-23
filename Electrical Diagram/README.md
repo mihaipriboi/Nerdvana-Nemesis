@@ -1,1 +1,2 @@
-Electrical diagram made using www.circuit-diagram.org
+# Electrical Diagram
+The diagram was made using www.circuit-diagram.org
