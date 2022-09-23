@@ -1,7 +1,7 @@
 # Nerdvana Nemesis
 
 ### Team: Antonia Onisoru, Teodor Balan, Mihai Priboi
-  ![Team](Team Photos/team.jpg)
+  ![Team](Team_Photos/team.jpg)
 
 <br>
 
@@ -25,7 +25,7 @@
   ![Bottom](Robot_Photos/Bottom.jpg)
 
 ## Electrical diagram
-  ![Diagram](Electrical Diagram/electrical_diagram.png)
+  ![Diagram](Electrical_Diagram/electrical_diagram.png)
   
 
 ### Building the robot
