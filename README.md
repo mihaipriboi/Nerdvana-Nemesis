@@ -17,12 +17,12 @@
   - The "Robot Photos" folder contains the team photos required by the regulation
 
 ## Photo of the robot
-  ![Front](Robot Photos/Front.jpg)
-  ![Back](Robot Photos/Back.jpg)
-  ![Right](Robot Photos/Right.jpg)
-  ![Left](Robot Photos/Left.jpg)
-  ![Top](Robot Photos/Top.jpg)
-  ![Bottom](Robot Photos/Bottom.jpg)
+  ![Front](Robot_Photos/Front.jpg)
+  ![Back](Robot_Photos/Back.jpg)
+  ![Right](Robot_Photos/Right.jpg)
+  ![Left](Robot_Photos/Left.jpg)
+  ![Top](Robot_Photos/Top.jpg)
+  ![Bottom](Robot_Photos/Bottom.jpg)
 
 ## Electrical diagram
   ![Diagram](Electrical Diagram/electrical_diagram.png)
