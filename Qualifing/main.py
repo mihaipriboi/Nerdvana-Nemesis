@@ -43,7 +43,7 @@ GPIO.setup(COLOR_S3,GPIO.OUT)
 
 # Initialization
 button = Button(BUTTON)
-servo = Servo(SERV, min_pulse_width=1/1000, max_pulse_width=2/1000, pin_factory=factory)
+servo = Servo(SERV, min_pulse_width=1.1/1000, max_pulse_width=1.9/1000, pin_factory=factory)
 # Motor driver
 pwmFreq = 100
 pwma = GPIO.PWM(PWMA, pwmFreq)
@@ -87,57 +87,30 @@ def arduinoReceving(ser):
             #print(ultrasonic)
             
 
-def wallDiff():
-    global ultrasonic, turnDirection
+def readSensors():
+    global ultrasonic
     
-    leftSensor = 0
-    rightSensor = 0
-    while leftSensor * rightSensor == 0:
+    for i in range(3):
         sensor = ultrasonic.split()
         leftSensor = int(sensor[0])
-        if len(sensor) > 1:  # ca sa nu avem erori daca citeste doar un nr
+        if len(sensor) == 3:  # ca sa nu avem erori daca citeste doar un nr
             rightSensor = int(sensor[1])
-            if leftSensor * rightSensor != 0:
-                #print(leftSensor, end=" - ")
-                #print(rightSensor)
-                #print("raw: " + ultrasonic)
-                return (leftSensor, rightSensor)
+            frontSensor = int(sensor[2])
+            if leftSensor * rightSensor * frontSensor != 0:
+                return (leftSensor, rightSensor, frontSensor)
+    
+    if frontSensor == 0:
+        frontSensor = 400;
+    return (leftSensor, rightSensor, frontSensor)
 
 def clamp(val, small, big):
     return max(small, min(val, big))
 
 def moveServo(angle):
-    servoCorrection = 0.04
-    angle = clamp(angle, -1 + servoCorrection, 1 - servoCorrection)
+    servoCorrection = -0.068
+    angle = clamp(angle, -1 - servoCorrection, 1 + servoCorrection)
     angle += servoCorrection
     servo.value = -angle
-
-def firstTurn(turnDirection):
-    global servo, kP, kI, kD
-    moveServo(-turnDirection)
-    time.sleep(1.1)
-    
-    startTime = time.time()
-    (leftSensor, rightSensor) = wallDiff()
-    offset = rightSensor
-    if turnDirection == 1:
-        offset = leftSensor
-    integral = 0
-    lastError = 0
-    print(leftSensor, rightSensor, offset)
-    
-    while time.time() - startTime < 0.4:
-        (leftSensor, rightSensor) = wallDiff()
-        
-        if turnDirection == 1:
-            error = leftSensor - offset
-        else:
-            error = offset - rightSensor
-        
-        angle = kP * error + kI * integral + kD * (error - lastError)
-        moveServo(clamp(angle, -1, 1))
-    moveServo(0)
-    
 
 def endProgram():
     moveServo(0)
@@ -151,12 +124,12 @@ def endProgram():
 if __name__ == "__main__":
     moveServo(0)
     
-    kP = 0.08 #0.08
+    kP = 0.02 #0.08
     kI = 0
-    kD = 0.05 #0.14
+    kD = 0.08 #0.14
     speed = 100
-    offset = 25
-    offsetSpeed = 0.003
+    offset = 30
+    offsetSpeed = 0.005
     turnDirection = 0
     angle = 0
     turns = 0
@@ -180,7 +153,6 @@ if __name__ == "__main__":
         
         time.sleep(0.1)
         
-        button.wait_for_press()
         print("Start")
         
         lastError = 0
@@ -188,81 +160,46 @@ if __name__ == "__main__":
         motorStart(speed)
         isTurning = 0
         
-        (leftSensor, rightSensor) = wallDiff()
-        currentOffset = leftSensor
+        (leftSensor, rightSensor, frontSensor) = readSensors()
+        currentOffset = rightSensor
         offsetSum = leftSensor + rightSensor
         
         start_offset = offsetSum / 2
         print(start_offset)
         currentTime = time.time()
         
-                
-        while True:
-            oldTime = currentTime
-            currentTime = time.time()
-            deltaTime = currentTime - oldTime
-            
-            (leftSensor, rightSensor) = wallDiff()
-            #print(leftSensor, rightSensor)
-            
-            if turnDirection != 0:
-                
-                if turnDirection == -1:
-                    error = leftSensor - currentOffset
-                else:
-                    error = currentOffset - rightSensor
-                                 
-                angle = kP * error + kI * integral + kD * (error - lastError)
-                moveServo(clamp(angle, -1, 1))
-                
-                integral += error
-                lastError = error
-                
-                if currentOffset < offset:
-                    currentOffset += offsetSpeed
-                else:
-                    currentOffset -= offsetSpeed
-                
-                if turns > 10:
-                    lastTurnTime += deltaTime
-                    if lastTurnTime > 2:
-                        motorStop()
-                        time.sleep(60000)
-                
-                if abs(error) > 100:
-                    if isTurning == 0:
-                        isTurning = 1
-                        print("Turns: ",turns)
-                        turns += 1
-                
-                if isTurning == 1:
-                    turnTime += deltaTime
-                    if turnTime > 2.5:
-                        turnTime = 0
-                        isTurning = 0
-                    
-                
-            if turnDirection == 0:
-                if leftSensor > 100:
-                    turnDirection = -1
-                    firstTurn(-1)
-                    (l, r) = wallDiff()
-                    currentOffset = l
-                elif rightSensor > 100:
-                    turnDirection = 1
-                    firstTurn(1)
-                    (l, r) = wallDiff()
-                    currentOffset = r
-                else:
-                    error = leftSensor - currentOffset
-                    angle = kP * error + kI * integral + kD * (error - lastError)
-                    moveServo(clamp(angle, -1, 1))
-                    
-                    integral += error
-                    lastError = error
-            
-        motorStop()
         
+        while turns < 11:
+            (leftSensor, rightSensor, frontSensor) = readSensors()
+
+            
+            if frontSensor < 70:
+                #motorStart(-100)
+                #time.sleep(10)
+                
+                moveServo(1)
+                time.sleep(0.4)
+                moveServo(0)
+                motorStart(-1)
+                time.sleep(2)
+                motorStart(speed)
+                (leftSensor, rightSensor, frontSensor) = readSensors()
+                currentOffset = rightSensor
+                lastError = 0
+                #while True:
+                #    print(readSensors())
+                #time.sleep(1000)
+                
+                
+            error = currentOffset - rightSensor
+            angle = kP * error + kI * integral + kD * (error - lastError)
+            moveServo(clamp(angle, -1, 1))
+            print(rightSensor)
+            
+            integral += error
+            lastError = error 
         
     finally:
         endProgram()
+
+
