@@ -22,7 +22,7 @@
   
    After we qualified for the international, we started making some changes, such as trying to make the robot faster and more constant. So we added a gyroscope sensor, and an ultrasonic sensor in the front and made the robot smaller. Also, we upgraded from an Arduino Uno to an Arduino Nano Every, because it has more interrupt pins. In addition, we tried changing the drive motor to a micromotor in order to make it faster. Unfortunately, even though it made the robot much faster, we fried the ones we tested. We believe it happened because the robot was too heavy for the motor, causing it to overheat and eventually fry it.
 
-## Photo of the robot
+## Photo our robot Paula (**P**retty **A**wesome **U**ltra **L**ow **A**ccurate robot)
 | <img src="/Robot_Photos/Front.jpg" width="90%" /> | <img src="/Robot_Photos/Back.jpg" width="90%" /> | 
 | :--: | :--: | 
 | *Front* | *Back* |
