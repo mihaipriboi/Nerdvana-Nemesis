@@ -3,7 +3,7 @@
 ### Team: Antonia Onisoru, Teodor Balan, Mihai Priboi
   ![Team](Team_Photos/team.jpg)
 
-## Our video of the robot on [Youtube](https://youtu.be)
+## Our video of the robot on [Youtube](https://youtu.be/-w9J5_oPF1A)
 
 ## Repository content
   - The "Final" folder contains the final code for the final stage
